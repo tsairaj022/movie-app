@@ -33,47 +33,51 @@ const HomePage = () => {
     clearError,
   } = useMovies();
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('title');
+  const [sortBy, setSortBy] = useState('rating');
 
   // Create a stable debounced search function
   const debouncedSearch = useCallback(
     debounce((query) => {
-      loadMovies({ page: 1, sort: sortBy, search: query });
+      if (query.trim()) {
+        loadMovies(1, query.trim(), sortBy);
+      } else {
+        loadMovies(1, '', sortBy);
+      }
     }, 500),
-    [sortBy, loadMovies]
+    [loadMovies, sortBy]
   );
 
-  // Handle initial load and sort changes
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      loadMovies({ page: currentPage, sort: sortBy });
-    }
-  }, [currentPage, sortBy]);
-
-  // Handle search changes
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      debouncedSearch(searchQuery);
-    } else {
-      loadMovies({ page: 1, sort: sortBy });
-    }
-  }, [searchQuery]);
-
-  const handlePageChange = (event, value) => {
-    loadMovies({ page: value, sort: sortBy, search: searchQuery });
-  };
-
-  const handleSortChange = (event) => {
-    setSortBy(event.target.value);
-  };
-
+  // Handle search input changes
   const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+    const query = event.target.value;
+    setSearchQuery(query);
+    debouncedSearch(query);
   };
 
-  const handleMovieClick = (movieId) => {
-    navigate(`/movies/${movieId}`);
+  // Handle sort changes
+  const handleSortChange = (event) => {
+    const newSortBy = event.target.value;
+    setSortBy(newSortBy);
+    if (searchQuery.trim()) {
+      loadMovies(1, searchQuery.trim(), newSortBy);
+    } else {
+      loadMovies(1, '', newSortBy);
+    }
   };
+
+  // Handle page changes
+  const handlePageChange = (event, value) => {
+    if (searchQuery.trim()) {
+      loadMovies(value, searchQuery.trim(), sortBy);
+    } else {
+      loadMovies(value, '', sortBy);
+    }
+  };
+
+  // Initial load
+  useEffect(() => {
+    loadMovies(1, '', sortBy);
+  }, []);
 
   if (loading) {
     return (
@@ -146,7 +150,7 @@ const HomePage = () => {
                     transition: 'transform 0.2s ease-in-out',
                   },
                 }}
-                onClick={() => handleMovieClick(movie._id)}
+                onClick={() => navigate(`/movies/${movie._id}`)}
               >
                 <CardMedia
                   component="img"
@@ -178,6 +182,8 @@ const HomePage = () => {
               onChange={handlePageChange}
               color="primary"
               size="large"
+              showFirstButton
+              showLastButton
             />
           </Box>
         )}
@@ -186,4 +192,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage; 
+export default HomePage;

@@ -118,13 +118,18 @@ const MovieDetailsPage = () => {
 
               <Box sx={{ mb: 2 }}>
                 <Typography variant="subtitle1" gutterBottom>
-                  Genre:
+                  Genres:
                 </Typography>
-                <Chip
-                  label={selectedMovie.genre}
-                  color="primary"
-                  variant="outlined"
-                />
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  {selectedMovie.genres?.map((genre) => (
+                    <Chip
+                      key={genre}
+                      label={genre}
+                      color="primary"
+                      variant="outlined"
+                    />
+                  )) ?? []}
+                </Box>
               </Box>
 
               <Divider sx={{ my: 2 }} />
@@ -147,7 +152,7 @@ const MovieDetailsPage = () => {
                       label={actor}
                       variant="outlined"
                     />
-                  ))}
+                  )) ?? []}
                 </Box>
               </Box>
 
@@ -167,4 +172,4 @@ const MovieDetailsPage = () => {
   );
 };
 
-export default MovieDetailsPage; 
+export default MovieDetailsPage;
