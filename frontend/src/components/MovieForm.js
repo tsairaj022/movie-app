@@ -27,8 +27,8 @@ const MovieForm = ({ movieId }) => {
     releaseDate: '',
     duration: '',
     rating: '',
-    genres: [],
-    cast: [],
+    genres: [], // Initialize as empty array
+    cast: [], // Initialize as empty array
     director: '',
     posterUrl: '',
   });
@@ -38,15 +38,15 @@ const MovieForm = ({ movieId }) => {
   useEffect(() => {
     if (movieId && selectedMovie) {
       setFormData({
-        title: selectedMovie.title,
-        description: selectedMovie.description,
-        releaseDate: selectedMovie.releaseDate.split('T')[0],
-        duration: selectedMovie.duration,
-        rating: selectedMovie.rating,
-        genres: selectedMovie.genres,
-        cast: selectedMovie.cast,
-        director: selectedMovie.director,
-        posterUrl: selectedMovie.posterUrl,
+        title: selectedMovie.title || '',
+        description: selectedMovie.description || '',
+        releaseDate: selectedMovie.releaseDate ? selectedMovie.releaseDate.split('T')[0] : '',
+        duration: selectedMovie.duration || '',
+        rating: selectedMovie.rating || '',
+        genres: selectedMovie.genres || [], // Provide default empty array
+        cast: selectedMovie.cast || [], // Provide default empty array
+        director: selectedMovie.director || '',
+        posterUrl: selectedMovie.posterUrl || '',
       });
     }
   }, [movieId, selectedMovie]);
@@ -227,7 +227,7 @@ const MovieForm = ({ movieId }) => {
               </Button>
             </Box>
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              {formData.genres.map((genre) => (
+              {formData.genres?.map((genre) => (
                 <Chip
                   key={genre}
                   label={genre}
@@ -259,7 +259,7 @@ const MovieForm = ({ movieId }) => {
               </Button>
             </Box>
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              {formData.cast.map((member) => (
+              {formData.cast?.map((member) => (
                 <Chip
                   key={member}
                   label={member}
@@ -292,4 +292,4 @@ const MovieForm = ({ movieId }) => {
   );
 };
 
-export default MovieForm; 
+export default MovieForm;
