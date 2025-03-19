@@ -33,50 +33,41 @@ const HomePage = () => {
     clearError,
   } = useMovies();
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('rating');
+  const [sortBy, setSortBy] = useState('-rating'); // Start with rating in descending order
 
   // Create a stable debounced search function
   const debouncedSearch = useCallback(
-    debounce((query) => {
-      if (query.trim()) {
-        loadMovies(1, query.trim(), sortBy);
-      } else {
-        loadMovies(1, '', sortBy);
-      }
+    debounce((query, sort) => {
+      loadMovies(1, query, sort);
     }, 500),
-    [loadMovies, sortBy]
+    [loadMovies]
   );
 
   // Handle search input changes
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
-    debouncedSearch(query);
+    debouncedSearch(query, sortBy);
   };
 
   // Handle sort changes
   const handleSortChange = (event) => {
     const newSortBy = event.target.value;
     setSortBy(newSortBy);
-    if (searchQuery.trim()) {
-      loadMovies(1, searchQuery.trim(), newSortBy);
-    } else {
-      loadMovies(1, '', newSortBy);
-    }
+    loadMovies(1, searchQuery, newSortBy);
   };
 
   // Handle page changes
   const handlePageChange = (event, value) => {
-    if (searchQuery.trim()) {
-      loadMovies(value, searchQuery.trim(), sortBy);
-    } else {
-      loadMovies(value, '', sortBy);
-    }
+    loadMovies(value, searchQuery, sortBy);
   };
 
-  // Initial load
+  // Initial load and cleanup
   useEffect(() => {
     loadMovies(1, '', sortBy);
+    return () => {
+      debouncedSearch.cancel();
+    };
   }, []);
 
   if (loading) {
@@ -126,10 +117,14 @@ const HomePage = () => {
               <FormControl fullWidth>
                 <InputLabel>Sort by</InputLabel>
                 <Select value={sortBy} label="Sort by" onChange={handleSortChange}>
-                  <MenuItem value="title">Title</MenuItem>
-                  <MenuItem value="rating">Rating</MenuItem>
-                  <MenuItem value="releaseDate">Release Date</MenuItem>
-                  <MenuItem value="duration">Duration</MenuItem>
+                  <MenuItem value="title">Title (A-Z)</MenuItem>
+                  <MenuItem value="-title">Title (Z-A)</MenuItem>
+                  <MenuItem value="-rating">Rating (High to Low)</MenuItem>
+                  <MenuItem value="rating">Rating (Low to High)</MenuItem>
+                  <MenuItem value="-releaseDate">Release Date (Newest)</MenuItem>
+                  <MenuItem value="releaseDate">Release Date (Oldest)</MenuItem>
+                  <MenuItem value="-duration">Duration (Longest)</MenuItem>
+                  <MenuItem value="duration">Duration (Shortest)</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
