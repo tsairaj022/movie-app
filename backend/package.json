@@ -2,14 +2,14 @@
   "name": "movie-app-backend",
   "version": "1.0.0",
   "description": "Backend for MERN Stack Movie Application",
-  "main": "src/server.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
     "worker": "node src/workers/movieWorker.js"
   },
   "keywords": ["movie", "mern", "express", "mongodb", "react"],
-  "author": "",
+  "author": "Sairaj Thota",
   "license": "ISC",
   "dependencies": {
     "amqplib": "^0.10.3",
